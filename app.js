@@ -1,28 +1,88 @@
-var express = require('express');
-var app = express();
-var formidable = require("formidable");
-fs = require("fs");
+const express = require('express');
+const http = require('http');
+const multiparty = require('multiparty');
+const path = require('path');
+const fs = require('fs');
+const Sharp = require('sharp');
+const uuidv1 = require('uuid/v1');
+const mkdirp = require('mkdirp');
 
-app.get('/', function (req, res) {
-    res.send('Hello World!');
+const app = express();
+
+app.use('/', express.static(path.join(__dirname, './public')));
+
+app.post('/avatar', handleUpload);
+
+let port = process.env.PORT || 8088;
+app.set('port', port);
+
+let server = http.createServer(app);
+
+server.listen(port, function () {
+  console.log(`Server passport listening on port: ${port}`);
 });
 
-app.use('/public', express.static('public'));
+const UPLOAD_DIR = './public/uploads/';
 
-app.post('/upload', function (req, res) {
-    var form = new formidable.IncomingForm();
-    console.log("about to parse");
-    form.parse(req, function(error, fields, files) {
-        console.log("parsing done");
-        console.log(files.upload.path);
-        fs.writeFileSync("public/test.png", fs.readFileSync(files.upload.path));
-        // res.redirect("/public/upload.html") ;
+function handleUpload(req, res, next) {
+  const form = new multiparty.Form({
+    maxFilesSize: 2 * 1024 * 1024
+  });
+
+  form.parse(req, function (err, fields, files) {
+    if (err) {
+      console.error(err);
+      if (err.code === 'ETOOBIG') {
+        res.json({
+          state: 'fail',
+          message: '文件大小不能超过 2 M'
+        })
+      } else {
+        res.json({
+          state: 'fail',
+          message: '服务器错误'
+        });
+      }
+      return;
+    }
+
+    const avatar = files.avatar && files.avatar[0];
+    const fileType = avatar.headers['content-type'];
+    if (fileType.split('/')[0] !== 'image') {
+      fs.unlink(avatar.path, function (err) {
+        if (err) {
+          console.error(err);
+        }
+      });
+      return res.json({
+        state: 'fail',
+        message: '文件格式错误'
+      });
+    }
+    console.log('成功接收图片 %s，开始 Resize', avatar.originalFilename);
+
+    mkdirp.sync(UPLOAD_DIR);
+    const newName = uuidv1() + '.jpeg';
+    const newPath = path.join(UPLOAD_DIR, newName);
+    Sharp(avatar.path).resize(600).toFile(newPath, function (err, info) {
+      if (err) {
+        console.error(err);
+        res.json({
+          state: 'fail',
+          message: '服务器错误'
+        });
+      } else {
+        console.log('成功 Resize 图片！图片信息为：' + JSON.stringify(info));
+        res.json({
+          state: 'success',
+          message: '图片上传成功',
+          data: {
+            width: info.width,
+            height: info.height,
+            path: '/uploads/' + newName
+          }
+        });
+      }
     });
-});
-
-var server = app.listen(3000, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('Example app listening at http:3000', host, port);
-});
+  });
+}

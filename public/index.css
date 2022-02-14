@@ -1,0 +1,176 @@
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.page-wrapper {
+  padding-top: 110px;
+}
+
+.main {
+  margin: 0 auto;
+  width: 500px;
+  padding: 20px 15px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 20px;
+  cursor: pointer;
+  border-radius: 3px;
+  color: #fff;
+  background-color: #4285f4;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
+}
+
+.btn[disabled] {
+  background-color: #bbb;
+  color: #fff;
+  cursor: default;
+}
+
+#h5FileInput {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: pointer !important;
+  opacity: 0;
+  z-index: -1;
+}
+
+.preview-container {
+  margin: 20px 0;
+}
+
+.img-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+}
+
+.img-container img {
+  width: 320px;
+  height: 320px;
+}
+
+.footer {
+  margin-bottom: 20px;
+}
+
+button {
+  border: none;
+}
+
+.process {
+  position: absolute;
+  display: none;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f7f7f7;
+  vertical-align: middle;
+}
+
+.process-bg {
+  width: 0;
+  height: 15px;
+  background-color: #00a854;
+  -webkit-transition: all .4s cubic-bezier(.08, .82, .17, 1) 0s;
+  transition: all .4s cubic-bezier(.08, .82, .17, 1) 0s;
+}
+
+.process-bg:before {
+  content: "";
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  -webkit-animation: progress-active 2.4s cubic-bezier(.23, 1, .32, 1) infinite;
+  animation: progress-active 2.4s cubic-bezier(.23, 1, .32, 1) infinite;
+}
+
+@-webkit-keyframes progress-active {
+  0% {
+    opacity: .1;
+    width: 0
+  }
+
+  20% {
+    opacity: .5;
+    width: 0
+  }
+
+  to {
+    opacity: 0;
+    width: 100%
+  }
+}
+
+@keyframes progress-active {
+  0% {
+    opacity: .1;
+    width: 0
+  }
+
+  20% {
+    opacity: .5;
+    width: 0
+  }
+
+  to {
+    opacity: 0;
+    width: 100%
+  }
+}
+
+.drag-ready .drop-container {
+  display: block;
+}
+
+.drop-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  min-height: 100px;
+  z-index: 11000;
+  background-color: #FFF;
+  background-color: rgba(255, 255, 255, .85);
+}
+
+.drop-target {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 20px;
+  border-radius: 15px;
+  border: 4px dashed #4285f4;
+  text-align: center;
+}
+
+.drop-target .text {
+  position: absolute;
+  color: #4285f4;
+  top: 40%;
+  left: 0;
+  right: 0;
+  margin-top: -20px;
+  font-size: 36px;
+}
